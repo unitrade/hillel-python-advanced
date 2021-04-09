@@ -54,7 +54,7 @@ class Account:
 
 
 if __name__ == '__main__':
-    acc = Account(-1000.00)
+    acc = Account(1000.00)
 
     acc.amount = 10000  # Check for manual set
     assert acc.amount == 1000, "Can not be set manual"
