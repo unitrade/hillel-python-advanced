@@ -1,4 +1,5 @@
 import uuid
+from copy import copy
 
 
 class Person:
@@ -12,56 +13,34 @@ class Person:
         self.__last_name = last_name
         self.__gender = gender
 
-    @staticmethod
-    def warn(object_field):
-        """
-
-        Method return message if the object is trying to change
-
-        """
-        print("The object is not mutable. Can not change to %s" % object_field)
-
-    @property
-    def id(self):
+    def get_id(self):
         return self.__id
 
-    @id.setter
-    def id(self, id):
-        Person.warn(id)
-
-    @property
-    def name(self):
+    def get_name(self):
         return self.__name
 
-    @name.setter
-    def name(self, name):
-        Person.warn(name)
-
-    @property
-    def surname(self):
+    def get_last_name(self):
         return self.__last_name
 
-    @surname.setter
-    def surname(self, last_name):
-        Person.warn(last_name)
-
-    @property
-    def gender(self):
+    def get_gender(self):
         return self.__gender
 
-    @gender.setter
-    def gender(self, gender):
-        Person.warn(gender)
+    def copy_with(self, name, last_name):
+        my_object = copy(self)
+        my_object.__id = uuid.uuid1()
+        my_object.__name = name
+        my_object.__last_name = last_name
+        return my_object
 
-    @property
-    def full_info(self):
-        return "UUID: %s\nName: %s\nSurname: %s\nGender: %s " % (self.__id, self.__name, self.__last_name, self.__gender)
+    def get_full_info(self):
+        return "UUID: %s\nName: %s\nSurname: %s\nGender: %s " \
+               % (self.__id, self.__name, self.__last_name, self.__gender)
 
     def __hash__(self):
         return hash(self.__id)
 
     def __eq__(self, other):
-        return self.__last_name == other.__surname and self.__name == other.__name and self.__gender == other.__gender
+        return self.__last_name == other.__last_name and self.__name == other.__name and self.__gender == other.__gender
 
 
 if __name__ == '__main__':
@@ -77,13 +56,32 @@ if __name__ == '__main__':
         'male'
     )
 
-    # person1._Person__name = 'Igor'
-    person1.name = 'Sasha'
+    person3 = Person(
+        'Silvester',
+        'Stallone',
+        'male'
+    )
 
-    assert person1.name == 'Silvester', 'Object has been changed'
-    print(person1.full_info)
+    assert person1 == person3, 'Object not equal'
 
-    # UUID: d65a1594-97d2-11eb-908b-acde48001122
+    person1.__setattr__("name", "Alex")
+    assert person1.get_name() == 'Silvester', 'Object has been changed'
+
+    person4 = person1.copy_with(
+        "Brad",
+        "Pitt"
+    )
+
+    print(person1.get_full_info())
+
+    # UUID: 343b4f7a-9936-11eb-a497-acde48001122
     # Name: Silvester
     # Surname: Stallone
+    # Gender: male
+
+    print(person4.get_full_info())
+
+    # UUID: 343b520e-9936-11eb-a497-acde48001122
+    # Name: Brad
+    # Surname: Pitt
     # Gender: male
