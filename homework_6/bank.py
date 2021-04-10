@@ -1,58 +1,8 @@
 import datetime
+from math import isinf, isnan
 
 
-class Account:
-    """
-
-    Class Account that represent a bank work flow
-
-    ...
-
-    Args:
-    -----
-        amount: float
-            The initial amount, which may be negative
-        num_tx: int
-            The number of successful transactions which saved in log
-            N=0 that means log off
-            default=10
-
-    Attributes:
-    -----------
-    __amount: float
-        The  amount of account
-    __num_tx: int
-        The number of successful transactions
-    __tx: list
-        The list that stores the transaction log.
-    __add_tx('str', self.__amount):
-        method that add successful transaction to log
-        'str' name of tx
-
-
-    Methods:
-    --------
-    get_amount(self)
-        A method that returns the current state of the account
-    get_txs(self)
-        A method that returns the current state of the account
-    deposit(self, amount: float)
-        A method of crediting the account
-    withdraw(self, amount: float)
-        A method of withdrawal
-    __is_deposit_valid(amount)
-        A private static method that check for deposit is valid
-    __is_withdraw_valid(self, amount)
-        A private method that check for withdraw is valid
-    __add_tx(self, status: str, amount: float)
-        A private method that writes logs
-        Count of logs depends on num_tx variable
-    __add_amount(self, amount)
-        A method that increases the amount
-    __subtract_amount(self, amount)
-        A method that reduces the amount
-
-    """
+class Account():
 
     MAX_DEPOSIT = 10000  # Maximum transfer amount
 
@@ -63,36 +13,12 @@ class Account:
         self.__add_tx('Init', self.__amount)
 
     def get_amount(self):
-        """
-
-        A method that returns the current state of the account
-
-        Return:
-            amount
-
-        """
         return self.__amount
 
     def get_txs(self):
-        """
-
-        A method that returns successful transactions
-
-        Return:
-            transactions
-
-        """
         return self.__tx[:]
 
     def deposit(self, amount: float):
-        """
-
-        A method of crediting the account
-
-        Returns:
-            False if amount is not valid
-
-        """
         is_amount_valid, err = self.__is_deposit_valid(amount)
         if not is_amount_valid:
             return is_amount_valid, err
@@ -100,14 +26,6 @@ class Account:
         self.__add_tx('Deposit', amount)
 
     def withdraw(self, amount: float):
-        """
-
-        A method of withdrawal
-
-        Returns:
-            False if amount is not valid
-
-        """
         is_amount_valid, err = self.__is_withdraw_valid(amount)
         if is_amount_valid is not True:
             return is_amount_valid, err
@@ -116,16 +34,12 @@ class Account:
 
     @staticmethod
     def __is_deposit_valid(amount):
-        """
-
-        A private static method that check for deposit is valid
-        Returns:
-            False if amount < 0, amount == 0 and amount > MAX_DEPOSIT
-            True in other cases
-
-        """
         if amount < 0:
             return False, 'The operation cannot be performed - deposit can not be less than 0'
+        if isinf(amount):
+            return False, 'Infinite is not allowed'
+        if isnan(amount):
+            return False, 'NaN is not allowed'
         if amount == 0:
             return False, 'No action required'
         if amount > Account.MAX_DEPOSIT:
@@ -133,17 +47,12 @@ class Account:
         return True, ''
 
     def __is_withdraw_valid(self, amount):
-        """
-
-        A private method that check for withdraw is valid
-
-        Returns:
-            False if amount < 0, amount == 0 and amount > MAX_DEPOSIT
-            True in other cases
-
-        """
         if amount < 0:
             return False, 'The operation cannot be performed - withdraw can not be less than 0'
+        if isinf(amount):
+            return False, 'Infinite is not allowed'
+        if isnan(amount):
+            return False, 'NaN is not allowed'
         if amount == 0:
             return False, 'No action required'
         if amount > self.__amount:
@@ -151,15 +60,6 @@ class Account:
         return True, ''
 
     def __add_tx(self, status: str, amount: float):
-        """
-
-        A private method that writes logs
-        Count of logs depends on num_tx variable
-
-        Return:
-            transactions
-
-        """
         log = "{0} | {1} | {2}".format(datetime.datetime.now().isoformat(), status, str(amount))
         if self.__num_tx == 0:
             return self.get_txs()
@@ -171,11 +71,9 @@ class Account:
         return self.get_txs()
 
     def __add_amount(self, amount):
-        """A method that increases the amount"""
         self.__amount += amount
 
     def __subtract_amount(self, amount):
-        """A method that reduces the amount"""
         self.__amount -= amount
 
 
@@ -197,6 +95,14 @@ if __name__ == '__main__':
 
     result, err = acc.deposit(0)
     assert result is False and err == 'No action required'
+
+    acc.deposit(float('inf'))
+
+    result, err = acc.withdraw(float('inf'))
+    assert result is False and err == 'Infinite is not allowed'
+
+    result, err = acc.withdraw(float('-inf'))
+    assert result is False and err == 'The operation cannot be performed - withdraw can not be less than 0'
 
     acc.deposit(500.10)
     acc.withdraw(300)
