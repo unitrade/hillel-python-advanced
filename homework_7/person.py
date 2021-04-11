@@ -29,19 +29,16 @@ class Person:
         my_object = copy(self)
         my_object.__id = uuid.uuid1()
         for key, value in kwargs.items():
-            try:
-                if key == 'id':
-                    print('ID is autogenerate field')
-                elif key == 'name':
-                    my_object.__name = value
-                elif key == 'last_name':
-                    my_object.__last_name = value
-                elif key == 'gender':
-                    my_object.__gender = value
-                else:
-                    raise NameError("name '{}' is not defined".format(key))
-            except NameError as err:
-                print(err)
+            if key == 'id':
+                print('ID is autogenerate field')
+            elif key == 'name':
+                my_object.__name = value
+            elif key == 'last_name':
+                my_object.__last_name = value
+            elif key == 'gender':
+                my_object.__gender = value
+            else:
+                raise AttributeError("Person object has no attribute '{}'".format(key))
         return my_object
 
     def get_full_info(self):
@@ -79,26 +76,22 @@ if __name__ == '__main__':
 
     person4 = person1.copy_with(
         id="123",
-        city="New York",
         name="Rihanna",
         last_name="Fenty",
-        gender='female',
-        birthday="1988"
+        gender='female'
     )
 
     print(person1.get_full_info())
     print(person4.get_full_info())
 
     # ID is autogenerate field
-    # name 'city' is not defined
-    # name 'birthday' is not defined
     # +++++++++++++++++++++
-    # UUID: 809ca276-9ad3-11eb-b421-acde48001122
+    # UUID: 51d0bac4-9aef-11eb-93b3-acde48001122
     # Name: Silvester
     # Surname: Stallone
     # Gender: male
     # +++++++++++++++++++++
-    # UUID: 809ca4f6-9ad3-11eb-b421-acde48001122
+    # UUID: 51d0bd94-9aef-11eb-93b3-acde48001122
     # Name: Rihanna
     # Surname: Fenty
     # Gender: female
