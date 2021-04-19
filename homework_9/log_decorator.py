@@ -1,5 +1,6 @@
 import json
 import datetime
+from os import linesep
 
 
 class Logger:
@@ -23,13 +24,13 @@ class Logger:
             'level': "[%s]" % level,
             'msg': msg
         }
-        return log
+        return self.__convert_to_json(log)
 
     def _logging_handler(self, log: dict):
         pass
 
     @staticmethod
-    def _convert_to_json(log: dict):
+    def __convert_to_json(log: dict):
         return json.dumps(log)
 
 
@@ -38,7 +39,7 @@ class StdOutLogger(Logger):
         super().__init__(name)
 
     def _logging_handler(self, log: dict):
-        print(self._convert_to_json(log))
+        print(log)
 
 
 class FileLogger(Logger):
@@ -48,10 +49,10 @@ class FileLogger(Logger):
 
     def _logging_handler(self, buffer):
         with open(self._filename, 'a') as f:
-            f.write(self._convert_to_json(buffer) + "\n")
+            f.write(buffer + linesep)
 
 
-class LogDecorator(StdOutLogger, FileLogger):
+class LogDecorator(Logger):
     def __init__(self, name: str, list_loggers: list):
         super().__init__(name)
         self._list_loggers = list_loggers
