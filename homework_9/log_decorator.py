@@ -58,21 +58,16 @@ class LogDecorator(Logger):
         self._list_loggers = list_loggers
 
     def info(self, msg: str):
-        self._retransmission(msg, "INFO")
+        for logger in self._list_loggers:
+            logger.info(msg)
 
     def warning(self, msg: str):
-        self._retransmission(msg, "WARNING")
+        for logger in self._list_loggers:
+            logger.warning(msg)
 
     def error(self, msg: str):
-        self._retransmission(msg, "ERROR")
-
-    def _retransmission(self, msg: str, level: str):
-        for item in self._list_loggers:
-            if hasattr(item, level.lower()):
-                call = getattr(item, level.lower())
-                call(msg)
-            else:
-                print("Method for retransmission was not found.")
+        for logger in self._list_loggers:
+            logger.error(msg)
 
 
 if __name__ == '__main__':
