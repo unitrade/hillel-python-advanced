@@ -1,5 +1,6 @@
 import json
 import datetime
+from os import linesep
 
 
 class Logger:
@@ -23,14 +24,10 @@ class Logger:
             'level': "[%s]" % level,
             'msg': msg
         }
-        return log
+        return json.dumps(log)
 
     def _logging_handler(self, log: dict):
         pass
-
-    @staticmethod
-    def _convert_to_json(log: dict):
-        return json.dumps(log)
 
 
 class StdOutLogger(Logger):
@@ -38,17 +35,17 @@ class StdOutLogger(Logger):
         super().__init__(name)
 
     def _logging_handler(self, log: dict):
-        print(self._convert_to_json(log))
+        print(log)
 
 
 class FileLogger(Logger):
     def __init__(self, name, filename="my_log.log"):
         super().__init__(name)
-        self._filename = filename
+        self.__filename = filename
 
     def _logging_handler(self, buffer):
-        with open(self._filename, 'a') as f:
-            f.write(self._convert_to_json(buffer) + "\n")
+        with open(self.__filename, 'a') as f:
+            f.write(buffer + linesep)
 
 
 if __name__ == '__main__':
@@ -59,5 +56,3 @@ if __name__ == '__main__':
     l2.warning("Error during query on (1032,10.0.1.38,3306): 1062, Duplicate entry '6058-4006' for key 'interlocutors'")
     l2.error("Got error: mmsd 0x7f42537dbd80 , MYSQL 0x7f4277a01900 , FD 262 : timeout check")
     l2.error("Got error: mmsd 0x7f42537dbd80 , MYSQL 0x7f4277a01900 , FD 262 : timeout check")
-
-
