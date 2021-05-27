@@ -24,14 +24,10 @@ class Logger:
             'level': "[%s]" % level,
             'msg': msg
         }
-        return self.__convert_to_json(log)
+        return json.dumps(log)
 
     def _logging_handler(self, log: dict):
         pass
-
-    @staticmethod
-    def __convert_to_json(log: dict):
-        return json.dumps(log)
 
 
 class StdOutLogger(Logger):
@@ -45,10 +41,10 @@ class StdOutLogger(Logger):
 class FileLogger(Logger):
     def __init__(self, name, filename="my_log.log"):
         super().__init__(name)
-        self._filename = filename
+        self.__filename = filename
 
     def _logging_handler(self, buffer):
-        with open(self._filename, 'a') as f:
+        with open(self.__filename, 'a') as f:
             f.write(buffer + linesep)
 
 
